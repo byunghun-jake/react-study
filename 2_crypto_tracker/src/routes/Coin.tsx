@@ -1,10 +1,6 @@
 import { Link, Outlet, useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 
-interface RouterParams {
-  coinId: string
-}
-
 function Coin() {
   const navigate = useNavigate()
   const { coinId } = useParams()
