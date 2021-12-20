@@ -1,4 +1,9 @@
 import React, { useState } from "react"
+import styled from "styled-components"
+
+const Container = styled.div`
+  background-color: ${(props) => props.theme.bgColor};
+`
 
 function App() {
   const [userName, setUserName] = useState("")
@@ -19,7 +24,7 @@ function App() {
   }
 
   return (
-    <div>
+    <Container>
       <form onSubmit={onSubmit}>
         <input
           value={userName}
@@ -29,7 +34,7 @@ function App() {
         />
         <button>로그인</button>
       </form>
-    </div>
+    </Container>
   )
 }
 
