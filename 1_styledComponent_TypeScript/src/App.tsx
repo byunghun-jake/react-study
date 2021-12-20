@@ -9,6 +9,7 @@ function App() {
   const [userName, setUserName] = useState("")
 
   // React FormEvent
+  // https://reactjs.org/docs/events.html
   const onChange = (event: React.FormEvent<HTMLInputElement>) => {
     const {
       currentTarget: { value },
