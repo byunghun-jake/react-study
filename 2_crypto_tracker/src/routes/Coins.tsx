@@ -1,9 +1,15 @@
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
+import Loading from "../components/Loading"
 
 const Container = styled.div`
   padding: 0px 1rem;
+  max-width: 768px;
+  margin: 0 auto 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const Header = styled.div`
@@ -16,6 +22,7 @@ const Header = styled.div`
 const CoinList = styled.ul`
   display: grid;
   gap: 1rem;
+  width: 100%;
 `
 
 const CoinListItem = styled.li`
@@ -39,80 +46,52 @@ const CoinListItem = styled.li`
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 3rem;
+  font-weight: 700;
 `
 
-const coinData = [
-  {
-    id: "btc-bitcoin",
-    name: "Bitcoin",
-    symbol: "BTC",
-    rank: 1,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "eth-ethereum",
-    name: "Ethereum",
-    symbol: "ETH",
-    rank: 2,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "bnb-binance-coin",
-    name: "Binance Coin",
-    symbol: "BNB",
-    rank: 3,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "usdt-tether",
-    name: "Tether",
-    symbol: "USDT",
-    rank: 4,
-    is_new: false,
-    is_active: true,
-    type: "token",
-  },
-  {
-    id: "hex-hex",
-    name: "HEX",
-    symbol: "HEX",
-    rank: 5,
-    is_new: false,
-    is_active: true,
-    type: "token",
-  },
-  {
-    id: "sol-solana",
-    name: "Solana",
-    symbol: "SOL",
-    rank: 6,
-    is_new: false,
-    is_active: true,
-    type: "token",
-  },
-]
+interface ICoin {
+  id: string
+  name: string
+  symbol: string
+  rank: number
+  is_new: boolean
+  is_active: boolean
+  type: string
+}
 
 function Coins() {
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(true)
+  const [coinData, setCoinData] = useState<ICoin[]>([])
+
+  useEffect(() => {
+    // useEffect에 전달하는 콜백함수는 async로 만들 수 없다.
+    // 비동기로 동작하는 함수를 별도로 정의하고, 콜백함수 내부에 실행해야 한다.
+    // 즉시 실행 함수를 만들어 실행해보자
+    ;(async () => {
+      const res = await fetch("https://api.coinpaprika.com/v1/coins")
+      const data = await res.json()
+      setCoinData(data.slice(0, 20))
+      setLoading(false)
+      console.log(data)
+    })()
+  }, [])
+
   return (
     <Container>
       <Header>
-        <Title>Coins</Title>
-        <button onClick={() => navigate("/btc")}>비트코인</button>
+        <Title>코인</Title>
       </Header>
-      <CoinList>
-        {coinData.map((coin) => (
-          <CoinListItem key={coin.id}>
-            <Link to={coin.id}>{coin.name} &rarr;</Link>
-          </CoinListItem>
-        ))}
-      </CoinList>
+      {loading ? (
+        <Loading />
+      ) : (
+        <CoinList>
+          {coinData.map((coin) => (
+            <CoinListItem key={coin.id}>
+              <Link to={coin.id}>{coin.name} &rarr;</Link>
+            </CoinListItem>
+          ))}
+        </CoinList>
+      )}
     </Container>
   )
 }
