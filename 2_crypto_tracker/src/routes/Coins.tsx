@@ -31,14 +31,23 @@ const CoinListItem = styled.li`
   border-radius: 0.75rem;
 
   a {
-    display: block;
+    display: flex;
     padding: 1rem;
     transition: all 0.2s ease-in;
+    align-items: center;
+    gap: 0.5rem;
+
+    img {
+      width: 2rem;
+      height: 2rem;
+      object-fit: contain;
+    }
   }
 
   &:hover {
     a {
       color: ${(props) => props.theme.accentColor};
+      background-color: ${(props) => props.theme.bgColor};
     }
   }
 `
@@ -49,7 +58,7 @@ const Title = styled.h1`
   font-weight: 700;
 `
 
-interface ICoin {
+export interface ICoin {
   id: string
   name: string
   symbol: string
@@ -72,7 +81,6 @@ function Coins() {
       const data = await res.json()
       setCoinData(data.slice(0, 20))
       setLoading(false)
-      console.log(data)
     })()
   }, [])
 
@@ -87,7 +95,20 @@ function Coins() {
         <CoinList>
           {coinData.map((coin) => (
             <CoinListItem key={coin.id}>
-              <Link to={coin.id}>{coin.name} &rarr;</Link>
+              {/* state를 쓰는 이유:
+                우리는 이미 코인 리스트를 위한 데이터를 시간을 들여 받아온 상태,
+                상세 페이지에 구성할 데이터는 물론 다시 받아오겠지만,
+                이미 가지고 있는 데이터로 페이지의 일부를 구성할 수 있다.
+                이 데이터를 사용하지 않고, 전부 새로 받아온 데이터로 꾸미는 건 편하지만
+                사용자 경험 측면에서는 좋지 않을 수 있다.
+              */}
+              <Link to={coin.id} state={{ name: coin.name }}>
+                <img
+                  src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+                  alt={`${coin.name} 이미지`}
+                />
+                <span>{coin.name} &rarr;</span>
+              </Link>
             </CoinListItem>
           ))}
         </CoinList>
