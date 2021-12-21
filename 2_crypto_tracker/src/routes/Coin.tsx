@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import Loading from "../components/Loading"
-import { ICoin } from "./Coins"
+import { IInfo, IPrice } from "../types"
 
 const Container = styled.div`
   padding: 0px 1rem;
@@ -27,7 +27,7 @@ const Title = styled.h1`
   font-weight: 700;
 `
 
-interface RouteState {
+interface IRouteState {
   name: string
 }
 
@@ -36,19 +36,28 @@ function Coin() {
   // 코인 상세 페이지로 바로 접근하면 location에 state를 받아올 수 없기 때문에 에러가 발생한다.
   // Link를 통해 접근하는 방식과 직접 접근하는 방식 둘을 나누어 에러 핸들링을 해주어야 한다.
   const location = useLocation()
-  const locationState = location.state as RouteState
-  console.log(locationState)
+  const locationState = location.state as IRouteState
   const { coinId } = useParams()
-  const [coinData, setCoinData] = useState<ICoin>()
+  const [info, setInfo] = useState<IInfo | {}>({})
+  const [price, setPrice] = useState<IPrice | {}>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     ;(async () => {
-      const res = await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      const data = await res.json()
-      console.log(data)
+      const coinRes = await fetch(
+        `https://api.coinpaprika.com/v1/coins/${coinId}`
+      )
+      const priceRes = await fetch(
+        `https://api.coinpaprika.com/v1/tickers/${coinId}`
+      )
+      const coinData = await coinRes.json()
+      const priceData = await priceRes.json()
+      console.log(coinData)
+      console.log(priceData)
+      setInfo(coinData)
+      setPrice(priceData)
     })()
-  })
+  }, [])
 
   return (
     <Container>
