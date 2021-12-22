@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
+import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import { fetchCoins } from "../api"
 import Loading from "../components/Loading"
 
 const Container = styled.div`
@@ -69,31 +71,37 @@ export interface ICoin {
 }
 
 function Coins() {
-  const [loading, setLoading] = useState(true)
-  const [coinData, setCoinData] = useState<ICoin[]>([])
+  // React Query는 가져온 데이터를 캐싱한다.
+  // 덕분에 상세페이지에 이동 후, 뒤로가기를 통해 리스트 페이지로 돌아오더라도
+  // 데이터에 대한 요청을 다시 하지 않는다.
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins)
 
-  useEffect(() => {
-    // useEffect에 전달하는 콜백함수는 async로 만들 수 없다.
-    // 비동기로 동작하는 함수를 별도로 정의하고, 콜백함수 내부에 실행해야 한다.
-    // 즉시 실행 함수를 만들어 실행해보자
-    ;(async () => {
-      const res = await fetch("https://api.coinpaprika.com/v1/coins")
-      const data = await res.json()
-      setCoinData(data.slice(0, 20))
-      setLoading(false)
-    })()
-  }, [])
+  //
+  // const [loading, setLoading] = useState(true)
+  // const [coinData, setCoinData] = useState<ICoin[]>([])
+
+  // useEffect(() => {
+  //   // useEffect에 전달하는 콜백함수는 async로 만들 수 없다.
+  //   // 비동기로 동작하는 함수를 별도로 정의하고, 콜백함수 내부에 실행해야 한다.
+  //   // 즉시 실행 함수를 만들어 실행해보자
+  //   ;(async () => {
+  //     const res = await fetch("https://api.coinpaprika.com/v1/coins")
+  //     const data = await res.json()
+  //     setCoinData(data.slice(0, 20))
+  //     setLoading(false)
+  //   })()
+  // }, [])
 
   return (
     <Container>
       <Header>
         <Title>코인</Title>
       </Header>
-      {loading ? (
+      {isLoading ? (
         <Loading />
       ) : (
         <CoinList>
-          {coinData.map((coin) => (
+          {data?.slice(0, 20).map((coin) => (
             <CoinListItem key={coin.id}>
               {/* state를 쓰는 이유:
                 우리는 이미 코인 리스트를 위한 데이터를 시간을 들여 받아온 상태,

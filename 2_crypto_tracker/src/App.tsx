@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from "react-query"
+import { ReactQueryDevtools } from "react-query/devtools"
 import { createGlobalStyle } from "styled-components"
 import Router from "./router"
 
@@ -61,11 +63,16 @@ a {
 }
 `
 
+const queryClient = new QueryClient()
+
 function App() {
   return (
     <>
       <GlobalStyle />
-      <Router />
+      <QueryClientProvider client={queryClient}>
+        <Router />
+        <ReactQueryDevtools />
+      </QueryClientProvider>
     </>
   )
 }

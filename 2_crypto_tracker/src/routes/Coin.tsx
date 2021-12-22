@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useQuery } from "react-query"
 import {
   Link,
   Outlet,
@@ -8,6 +8,7 @@ import {
 } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
+import { fetchCoinInfo, fetchCoinPrice } from "../api"
 import Loading from "../components/Loading"
 import { IInfo, IPrice } from "../types"
 
@@ -98,38 +99,48 @@ function Coin() {
   const location = useLocation()
   const locationState = location.state as IRouteState
   const { coinId } = useParams()
-  const [info, setInfo] = useState<IInfo>()
-  const [price, setPrice] = useState<IPrice>()
-  const [loading, setLoading] = useState(true)
   const priceMatch = useMatch({ path: "/:coinId/price" })
   const chartMatch = useMatch({ path: "/:coinId/chart" })
-  console.log(priceMatch)
+  const { isLoading: infoLoading, data: info } = useQuery<IInfo>(
+    ["info", coinId],
+    () => fetchCoinInfo(coinId as string)
+  )
+  const { isLoading: priceLoading, data: price } = useQuery<IPrice>(
+    ["price", coinId],
+    () => fetchCoinPrice(coinId as string)
+  )
 
-  useEffect(() => {
-    ;(async () => {
-      const coinRes = await fetch(
-        `https://api.coinpaprika.com/v1/coins/${coinId}`
-      )
-      const priceRes = await fetch(
-        `https://api.coinpaprika.com/v1/tickers/${coinId}`
-      )
-      const coinData = await coinRes.json()
-      const priceData = await priceRes.json()
-      console.log(coinData)
-      console.log(priceData)
-      setInfo(coinData)
-      setPrice(priceData)
-      setLoading(false)
-    })()
-  }, [coinId])
+  // const [info, setInfo] = useState<IInfo>()
+  // const [price, setPrice] = useState<IPrice>()
+  // const [loading, setLoading] = useState(true)
+
+  // useEffect(() => {
+  //   ;(async () => {
+  //     const coinRes = await fetch(
+  //       `https://api.coinpaprika.com/v1/coins/${coinId}`
+  //     )
+  //     const priceRes = await fetch(
+  //       `https://api.coinpaprika.com/v1/tickers/${coinId}`
+  //     )
+  //     const coinData = await coinRes.json()
+  //     const priceData = await priceRes.json()
+  //     console.log(coinData)
+  //     console.log(priceData)
+  //     setInfo(coinData)
+  //     setPrice(priceData)
+  //     setLoading(false)
+  //   })()
+  // }, [coinId])
 
   return (
     <Container>
       <Header>
         <button onClick={() => navigate(-1)}>뒤로가기</button>
-        <Title>코인 : {locationState?.name || (!loading && info?.name)}</Title>
+        <Title>
+          코인 : {locationState?.name || (!infoLoading && info?.name)}
+        </Title>
       </Header>
-      {loading ? (
+      {infoLoading || priceLoading ? (
         <Loading />
       ) : (
         <>
