@@ -135,7 +135,7 @@ function Coin() {
   return (
     <Container>
       <Header>
-        <button onClick={() => navigate(-1)}>뒤로가기</button>
+        <button onClick={() => navigate("/")}>뒤로가기</button>
         <Title>
           코인 : {locationState?.name || (!infoLoading && info?.name)}
         </Title>
@@ -172,15 +172,14 @@ function Coin() {
         </>
       )}
       <Tabs>
-        <Tab isActive={priceMatch !== null}>
-          <Link to="price">가격</Link>
-        </Tab>
-
         <Tab isActive={!!chartMatch}>
           <Link to="chart">차트</Link>
         </Tab>
+        <Tab isActive={priceMatch !== null}>
+          <Link to="price">가격</Link>
+        </Tab>
       </Tabs>
-      <Outlet />
+      <Outlet context={{ coinId }} />
     </Container>
   )
 }
