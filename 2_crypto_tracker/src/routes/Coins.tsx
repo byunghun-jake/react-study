@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Helmet, HelmetProvider } from "react-helmet-async"
 import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
@@ -93,35 +94,42 @@ function Coins() {
   // }, [])
 
   return (
-    <Container>
-      <Header>
-        <Title>코인</Title>
-      </Header>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <CoinList>
-          {data?.slice(0, 20).map((coin) => (
-            <CoinListItem key={coin.id}>
-              {/* state를 쓰는 이유:
+    <>
+      <HelmetProvider>
+        <Helmet>
+          <title>코인</title>
+        </Helmet>
+      </HelmetProvider>
+      <Container>
+        <Header>
+          <Title>코인</Title>
+        </Header>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <CoinList>
+            {data?.slice(0, 20).map((coin) => (
+              <CoinListItem key={coin.id}>
+                {/* state를 쓰는 이유:
                 우리는 이미 코인 리스트를 위한 데이터를 시간을 들여 받아온 상태,
                 상세 페이지에 구성할 데이터는 물론 다시 받아오겠지만,
                 이미 가지고 있는 데이터로 페이지의 일부를 구성할 수 있다.
                 이 데이터를 사용하지 않고, 전부 새로 받아온 데이터로 꾸미는 건 편하지만
                 사용자 경험 측면에서는 좋지 않을 수 있다.
               */}
-              <Link to={coin.id} state={{ name: coin.name }}>
-                <img
-                  src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
-                  alt={`${coin.name} 이미지`}
-                />
-                <span>{coin.name} &rarr;</span>
-              </Link>
-            </CoinListItem>
-          ))}
-        </CoinList>
-      )}
-    </Container>
+                <Link to={coin.id} state={{ name: coin.name }}>
+                  <img
+                    src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+                    alt={`${coin.name} 이미지`}
+                  />
+                  <span>{coin.name} &rarr;</span>
+                </Link>
+              </CoinListItem>
+            ))}
+          </CoinList>
+        )}
+      </Container>
+    </>
   )
 }
 

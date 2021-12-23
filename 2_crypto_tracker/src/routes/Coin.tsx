@@ -8,6 +8,7 @@ import {
 } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
+import { Helmet, HelmetProvider } from "react-helmet-async"
 import { fetchCoinInfo, fetchCoinPrice } from "../api"
 import Loading from "../components/Loading"
 import { IInfo, IPrice } from "../types"
@@ -107,7 +108,10 @@ function Coin() {
   )
   const { isLoading: priceLoading, data: price } = useQuery<IPrice>(
     ["price", coinId],
-    () => fetchCoinPrice(coinId as string)
+    () => fetchCoinPrice(coinId as string),
+    {
+      refetchInterval: 5000,
+    }
   )
 
   // const [info, setInfo] = useState<IInfo>()
@@ -133,54 +137,61 @@ function Coin() {
   // }, [coinId])
 
   return (
-    <Container>
-      <Header>
-        <button onClick={() => navigate("/")}>뒤로가기</button>
-        <Title>
-          코인 : {locationState?.name || (!infoLoading && info?.name)}
-        </Title>
-      </Header>
-      {infoLoading || priceLoading ? (
-        <Loading />
-      ) : (
-        <>
-          <OverView>
-            <OverViewItem>
-              <span>랭킹: </span>
-              <span>{info?.rank}</span>
-            </OverViewItem>
-            <OverViewItem>
-              <span>로고: </span>
-              <span>{info?.symbol}</span>
-            </OverViewItem>
-            <OverViewItem>
-              <span>오픈소스: </span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
-            </OverViewItem>
-          </OverView>
-          <Description>{info?.description}</Description>
-          <OverView>
-            <OverViewItem>
-              <span>전체 공급량:</span>
-              <span>{price?.total_supply}</span>
-            </OverViewItem>
-            <OverViewItem>
-              <span>최대 공급량:</span>
-              <span>{price?.max_supply}</span>
-            </OverViewItem>
-          </OverView>
-        </>
-      )}
-      <Tabs>
-        <Tab isActive={!!chartMatch}>
-          <Link to="chart">차트</Link>
-        </Tab>
-        <Tab isActive={priceMatch !== null}>
-          <Link to="price">가격</Link>
-        </Tab>
-      </Tabs>
-      <Outlet context={{ coinId }} />
-    </Container>
+    <>
+      <HelmetProvider>
+        <Helmet>
+          <title>{locationState?.name || (!infoLoading && info?.name)}</title>
+        </Helmet>
+      </HelmetProvider>
+      <Container>
+        <Header>
+          <button onClick={() => navigate("/")}>뒤로가기</button>
+          <Title>
+            코인 : {locationState?.name || (!infoLoading && info?.name)}
+          </Title>
+        </Header>
+        {infoLoading || priceLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <OverView>
+              <OverViewItem>
+                <span>랭킹: </span>
+                <span>{info?.rank}</span>
+              </OverViewItem>
+              <OverViewItem>
+                <span>로고: </span>
+                <span>{info?.symbol}</span>
+              </OverViewItem>
+              <OverViewItem>
+                <span>가격: </span>
+                <span>${price?.quotes.USD.price.toFixed(3)}</span>
+              </OverViewItem>
+            </OverView>
+            <Description>{info?.description}</Description>
+            <OverView>
+              <OverViewItem>
+                <span>전체 공급량:</span>
+                <span>{price?.total_supply}</span>
+              </OverViewItem>
+              <OverViewItem>
+                <span>최대 공급량:</span>
+                <span>{price?.max_supply}</span>
+              </OverViewItem>
+            </OverView>
+          </>
+        )}
+        <Tabs>
+          <Tab isActive={!!chartMatch}>
+            <Link to="chart">차트</Link>
+          </Tab>
+          <Tab isActive={priceMatch !== null}>
+            <Link to="price">가격</Link>
+          </Tab>
+        </Tabs>
+        <Outlet context={{ coinId }} />
+      </Container>
+    </>
   )
 }
 
