@@ -1,7 +1,8 @@
-import { useState } from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
+import { useRecoilValue } from "recoil"
 import { createGlobalStyle, ThemeProvider } from "styled-components"
+import { isDarkAtom } from "./atoms"
 import Router from "./router"
 import { darkTheme, lightTheme } from "./theme"
 
@@ -68,16 +69,13 @@ a {
 const queryClient = new QueryClient()
 
 function App() {
-  const [isDarkMode, setDarkMode] = useState(true)
-
-  const toggleMode = () => setDarkMode((prev) => !prev)
-
+  const isDarkMode = useRecoilValue(isDarkAtom)
   return (
     <>
       <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
         <GlobalStyle />
         <QueryClientProvider client={queryClient}>
-          <Router isDarkMode={isDarkMode} toggleMode={toggleMode} />
+          <Router />
           <ReactQueryDevtools />
         </QueryClientProvider>
       </ThemeProvider>

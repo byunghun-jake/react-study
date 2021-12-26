@@ -5,6 +5,8 @@ import ko from "apexcharts/dist/locales/ko.json"
 import { fetchCoinHistory } from "../api"
 import Loading from "../components/Loading"
 import styled from "styled-components"
+import { useRecoilValue } from "recoil"
+import { isDarkAtom } from "../atoms"
 
 interface IContext {
   coinId: string
@@ -31,10 +33,10 @@ const Container = styled.div`
 
 interface IApexChartProps {
   data: IHistorical[]
-  isDarkMode: boolean
 }
 
-function LineChart({ data, isDarkMode }: IApexChartProps) {
+function LineChart({ data }: IApexChartProps) {
+  const isDarkMode = useRecoilValue(isDarkAtom)
   return (
     <ApexChart
       type="line"
@@ -100,7 +102,8 @@ function LineChart({ data, isDarkMode }: IApexChartProps) {
   )
 }
 
-function CandlestickChart({ data, isDarkMode }: IApexChartProps) {
+function CandlestickChart({ data }: IApexChartProps) {
+  const isDarkMode = useRecoilValue(isDarkAtom)
   return (
     <ApexChart
       type="candlestick"
@@ -183,11 +186,11 @@ function Chart() {
           <>
             <div>
               <h2>LineChart</h2>
-              <LineChart data={data} isDarkMode={context.isDarkMode} />
+              <LineChart data={data} />
             </div>
             <div>
               <h2>CandlestickChart</h2>
-              <CandlestickChart data={data} isDarkMode={context.isDarkMode} />
+              <CandlestickChart data={data} />
             </div>
           </>
         )
