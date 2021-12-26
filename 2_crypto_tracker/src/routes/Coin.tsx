@@ -24,10 +24,26 @@ const Container = styled.div`
 `
 
 const Header = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 0px;
+  width: 100%;
+
+  button {
+    position: absolute;
+    top: 50%;
+    left: 0px;
+    transform: translateY(-50%);
+    background-color: whitesmoke;
+    border: none;
+    width: 60px;
+    height: 40px;
+    border-radius: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
 `
 
 const Title = styled.h1`
@@ -145,7 +161,7 @@ function Coin() {
       </HelmetProvider>
       <Container>
         <Header>
-          <button onClick={() => navigate("/")}>뒤로가기</button>
+          <button onClick={() => navigate("/")}>🔙</button>
           <Title>
             코인 : {locationState?.name || (!infoLoading && info?.name)}
           </Title>

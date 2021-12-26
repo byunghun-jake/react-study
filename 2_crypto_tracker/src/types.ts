@@ -81,6 +81,7 @@ export interface Whitepaper {
 }
 
 export interface IPrice {
+  [index: string]: any
   id: string
   name: string
   symbol: string
@@ -99,6 +100,7 @@ export interface Quotes {
 }
 
 export interface Usd {
+  [index: string]: any
   price: number
   volume_24h: number
   volume_24h_change_24h: number
