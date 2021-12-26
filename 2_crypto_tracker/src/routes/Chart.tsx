@@ -8,6 +8,7 @@ import styled from "styled-components"
 
 interface IContext {
   coinId: string
+  isDarkMode: boolean
 }
 
 interface IHistorical {
@@ -28,7 +29,12 @@ const Container = styled.div`
   gap: 1rem;
 `
 
-function LineChart({ data }: { data: IHistorical[] }) {
+interface IApexChartProps {
+  data: IHistorical[]
+  isDarkMode: boolean
+}
+
+function LineChart({ data, isDarkMode }: IApexChartProps) {
   return (
     <ApexChart
       type="line"
@@ -55,7 +61,7 @@ function LineChart({ data }: { data: IHistorical[] }) {
           width: 3,
         },
         theme: {
-          mode: "dark",
+          mode: isDarkMode ? "dark" : "light",
         },
         xaxis: {
           type: "datetime",
@@ -94,7 +100,7 @@ function LineChart({ data }: { data: IHistorical[] }) {
   )
 }
 
-function CandlestickChart({ data }: { data: IHistorical[] }) {
+function CandlestickChart({ data, isDarkMode }: IApexChartProps) {
   return (
     <ApexChart
       type="candlestick"
@@ -122,7 +128,7 @@ function CandlestickChart({ data }: { data: IHistorical[] }) {
           width: 3,
         },
         theme: {
-          mode: "dark",
+          mode: isDarkMode ? "dark" : "light",
         },
         xaxis: {
           type: "datetime",
@@ -177,11 +183,11 @@ function Chart() {
           <>
             <div>
               <h2>LineChart</h2>
-              <LineChart data={data} />
+              <LineChart data={data} isDarkMode={context.isDarkMode} />
             </div>
             <div>
               <h2>CandlestickChart</h2>
-              <CandlestickChart data={data} />
+              <CandlestickChart data={data} isDarkMode={context.isDarkMode} />
             </div>
           </>
         )

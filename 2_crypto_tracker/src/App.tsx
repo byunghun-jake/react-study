@@ -1,7 +1,9 @@
+import { useState } from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
-import { createGlobalStyle } from "styled-components"
+import { createGlobalStyle, ThemeProvider } from "styled-components"
 import Router from "./router"
+import { darkTheme, lightTheme } from "./theme"
 
 const GlobalStyle = createGlobalStyle`
 * {
@@ -66,13 +68,19 @@ a {
 const queryClient = new QueryClient()
 
 function App() {
+  const [isDarkMode, setDarkMode] = useState(true)
+
+  const toggleMode = () => setDarkMode((prev) => !prev)
+
   return (
     <>
-      <GlobalStyle />
-      <QueryClientProvider client={queryClient}>
-        <Router />
-        <ReactQueryDevtools />
-      </QueryClientProvider>
+      <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+        <GlobalStyle />
+        <QueryClientProvider client={queryClient}>
+          <Router isDarkMode={isDarkMode} toggleMode={toggleMode} />
+          <ReactQueryDevtools />
+        </QueryClientProvider>
+      </ThemeProvider>
     </>
   )
 }

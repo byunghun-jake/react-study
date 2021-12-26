@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { Helmet, HelmetProvider } from "react-helmet-async"
 import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
@@ -71,7 +70,12 @@ export interface ICoin {
   type: string
 }
 
-function Coins() {
+interface ICoinsProps {
+  isDarkMode: boolean
+  toggleMode: () => void
+}
+
+function Coins({ isDarkMode, toggleMode }: ICoinsProps) {
   // React Query는 가져온 데이터를 캐싱한다.
   // 덕분에 상세페이지에 이동 후, 뒤로가기를 통해 리스트 페이지로 돌아오더라도
   // 데이터에 대한 요청을 다시 하지 않는다.
@@ -103,6 +107,7 @@ function Coins() {
       <Container>
         <Header>
           <Title>코인</Title>
+          <button onClick={toggleMode}>{isDarkMode ? "🌞" : "🌕"}</button>
         </Header>
         {isLoading ? (
           <Loading />

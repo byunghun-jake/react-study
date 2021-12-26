@@ -109,7 +109,11 @@ interface IRouteState {
   name: string
 }
 
-function Coin() {
+interface ICoinProps {
+  isDarkMode: boolean
+}
+
+function Coin({ isDarkMode }: ICoinProps) {
   const navigate = useNavigate()
   // 코인 상세 페이지로 바로 접근하면 location에 state를 받아올 수 없기 때문에 에러가 발생한다.
   // Link를 통해 접근하는 방식과 직접 접근하는 방식 둘을 나누어 에러 핸들링을 해주어야 한다.
@@ -205,7 +209,7 @@ function Coin() {
             <Link to="price">가격</Link>
           </Tab>
         </Tabs>
-        <Outlet context={{ coinId }} />
+        <Outlet context={{ coinId, isDarkMode }} />
       </Container>
     </>
   )
